@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мир Томаса</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at top,#35404b,#171b20 65%);
+    font-family:Arial, sans-serif;
+    color:#222;
+    overflow:hidden;
+}
+
+button{
+    font:inherit;
+    cursor:pointer;
+}
+
+.desktop{
+    min-height:100vh;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+}
+
+.topbar{
+    height:52px;
+    background:#20252a;
+    color:#fff;
+    border:2px solid #0e1114;
+    border-radius:8px 8px 0 0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 16px;
+    box-shadow:0 5px 15px #0008;
+}
+
+.topbar b{
+    letter-spacing:1px;
+}
+
+.clock{
+    font-size:14px;
+    opacity:.8;
+}
+
+.workspace{
+    flex:1;
+    position:relative;
+    background:#5d6872;
+    border:2px solid #0e1114;
+    border-top:0;
+    overflow:hidden;
+    box-shadow:0 10px 25px #0009;
+}
+
+.sheet{
+    position:absolute;
+    inset:18px;
+    background:#f5f1e6;
+    border:1px solid #bbb5a7;
+    box-shadow:0 8px 20px #0008;
+    overflow:auto;
+    padding:25px;
+    display:none;
+}
+
+.sheet.active{
+    display:block;
+    animation:paper .18s ease;
+}
+
+@keyframes paper{
+    from{
+        opacity:0;
+        transform:translateX(25px) rotate(.5deg);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.sheet:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.25;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0,
+            transparent 28px,
+            #aaa 29px
+        );
+}
+
+.content{
+    position:relative;
+    z-index:1;
+}
+
+h1{
+    margin:0 0 8px;
+    font-size:30px;
+}
+
+.subtitle{
+    color:#666;
+    margin-bottom:22px;
+}
+
+.back{
+    float:right;
+    background:#222;
+    color:#fff;
+    border:0;
+    padding:8px 13px;
+    border-radius:5px;
+}
+
+.note{
+    background:#fffdf5;
+    border:1px solid #aaa;
+    padding:14px;
+    margin:12px 0;
+    box-shadow:2px 3px 0 #bbb;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:14px;
+}
+
+.icon{
+    font-size:38px;
+    margin-bottom:8px;
+}
+
+.card{
+    background:#fffdf5;
+    border:1px solid #aaa;
+    padding:16px;
+    min-height:125px;
+    box-shadow:3px 4px 0 #bbb;
+    transition:.15s;
+}
+
+.card:hover{
+    transform:translateY(-2px) rotate(-.4deg);
+}
+
+.card button{
+    margin-top:10px;
+}
+
+.menuBtn{
+    width:100%;
+    text-align:left;
+    background:#fffdf5;
+    border:1px solid #999;
+    padding:13px;
+    box-shadow:2px 3px 0 #bbb;
+}
+
+.menuBtn:hover{
+    background:#eee8d8;
+}
+
+button.primary{
+    background:#222;
+    color:white;
+    border:0;
+    padding:9px 13px;
+    border-radius:4px;
+}
+
+button.light{
+    background:#e5dfd0;
+    border:1px solid #999;
+    padding:8px 12px;
+    border-radius:4px;
+}
+
+.stat{
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px dashed #aaa;
+    padding:8px 0;
+}
+
+.character{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:#fffdf5;
+    border:1px solid #aaa;
+    padding:12px;
+}
+
+.stick{
+    font-size:45px;
+}
+
+.rank{
+    font-weight:bold;
+}
+
+.vehicle{
+    font-size:55px;
+    text-align:center;
+}
+
+.mine{
+    text-align:center;
+    font-size:80px;
+}
+
+.bigMoney{
+    font-size:34px;
+    font-weight:bold;
+}
+
+.battle{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    border:3px solid #222;
+    min-height:360px;
+    background:#ddd;
+}
+
+.side{
+    padding:18px;
+    background:#faf8ee;
+}
+
+.side:first-child{
+    border-right:3px solid #222;
+}
+
+.fighters{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+    margin-top:12px;
+}
+
+.fighter{
+    border:1px solid #999;
+    padding:9px;
+    text-align:center;
+    background:white;
+}
+
+.dead{
+    opacity:.35;
+    text-decoration:line-through;
+}
+
+.log{
+    margin-top:15px;
+    background:#222;
+    color:#eee;
+    padding:14px;
+    min-height:100px;
+    font-family:monospace;
+    white-space:pre-line;
+}
+
+.homeIcon{
+    font-size:70px;
+    text-align:center;
+}
+
+.footer{
+    margin-top:20px;
+    color:#777;
+    font-size:13px;
+}
+
+@media(max-width:700px){
+    .desktop{padding:7px;}
+    .sheet{
+        inset:8px;
+        padding:17px;
+    }
+    h1{font-size:24px;}
+    .battle{
+        min-height:300px;
+    }
+    .fighters{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="desktop">
+
+    <div class="topbar">
+        <b>💻 THOMAS PC — МИР ТОМСА</b>
+        <span class="clock" id="clock"></span>
+    </div>
+
+    <div class="workspace">
+
+        <!-- РАБОЧИЙ СТОЛ -->
+        <section class="sheet active" id="desktopSheet">
+            <div class="content">
+                <h1>📁 Рабочий стол</h1>
+                <div class="subtitle">
+                    Листы моего мира
+                </div>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <div class="icon">🏙️</div>
+                        <b>Город</b>
+                        <br>
+                        <button class="light" onclick="openSheet('city')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">👥</div>
+                        <b>Люди</b>
+                        <br>
+                        <button class="light" onclick="openSheet('people')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🪖</div>
+                        <b>Армия</b>
+                        <br>
+                        <button class="light" onclick="openSheet('army')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🚗</div>
+                        <b>Транспорт</b>
+                        <br>
+                        <button class="light" onclick="openSheet('transport')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">⛏️</div>
+                        <b>Шахта</b>
+                        <br>
+                        <button class="light" onclick="openSheet('mine')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">💰</div>
+                        <b>Казна</b>
+                        <br>
+                        <button class="light" onclick="openSheet('treasury')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">⚔️</div>
+                        <b>Бой</b>
+                        <br>
+                        <button class="light" onclick="openSheet('battle')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">💾</div>
+                        <b>Сохранения</b>
+                        <br>
+                        <button class="light" onclick="openSheet('saves')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🏠</div>
+                        <b>Дом мэра</b>
+                        <br>
+                        <button class="light" onclick="openSheet('home')">
+                            Открыть лист
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    ✏️ <b>Идея:</b> каждый раздел этого проекта — отдельный
+                    «лист», как в твоей старой игре.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ГОРОД -->
+        <section class="sheet" id="city">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>🏙️ ГОРОД</h1>
+                <div class="subtitle">Главный лист города</div>
+
+                <div class="grid">
+                    <div class="card">
+                        <div class="icon">🏠</div>
+                        <b>Дом мэра</b>
+                        <p>Личная резиденция Томаса.</p>
+                        <button class="light" onclick="openSheet('home')">Открыть</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">🪖</div>
+                        <b>Военная база</b>
+                        <p>Здесь находятся военные.</p>
+                        <button class="light" onclick="openSheet('army')">Открыть</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="icon">⛏️</div>
+                        <b>Шахта</b>
+                        <p>Добыча ресурсов один раз в день.</p>
+                        <button class="light" onclick="openSheet('mine')">Открыть</button>
+                    </div>
+                </div>
+
+                <div class="note">
+                    🏛️ <b>Главный мэр:</b> Томас
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ЛЮДИ -->
+        <section class="sheet" id="people">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>👥 ЛЮДИ</h1>
+                <div class="subtitle">Жители и особые персонажи</div>
+
+                <div class="grid">
+
+                    <div class="character">
+                        <div class="stick">🧍</div>
+                        <div>
+                            <b>Томас</b><br>
+                            Главный мэр
+                        </div>
+                    </div>
+
+                    <div class="character">
+                        <div class="stick">🪖</div>
+                        <div>
+                            <b>Военный</b><br>
+                            🎖️ Серж.
+                        </div>
+                    </div>
+
+                    <div class="character">
+                        <div class="stick">👴</div>
+                        <div>
+                            <b>Ветеран</b><br>
+                            Бывший военнослужащий
+                        </div>
+                    </div>
+
+                    <div class="character">
+                        <div class="stick">👩</div>
+                        <div>
+                            <b>Девушка</b><br>
+                            Особый персонаж
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- АРМИЯ -->
+        <section class="sheet" id="army">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>🪖 АРМИЯ</h1>
+                <div class="subtitle">Военные силы города</div>
+
+                <div class="grid">
+
+                    <div class="character">
+                        <div class="stick">🪖</div>
+                        <div>
+                            <b>Рядовой</b><br>
+                            Сокр.: <span class="rank">Ряд.</span><br>
+                            🔫 PNG-оружие
+                        </div>
+                    </div>
+
+                    <div class="character">
+                        <div class="stick">🪖</div>
+                        <div>
+                            <b>Сержант</b><br>
+                            Сокр.: <span class="rank">Серж.</span><br>
+                            🔫 PNG-оружие
+                        </div>
+                    </div>
+
+                    <div class="character">
+                        <div class="stick">🪖</div>
+                        <div>
+                            <b>Капитан</b><br>
+                            Сокр.: <span class="rank">Кап.</span><br>
+                            🔫 PNG-оружие
+                        </div>
+                    </div>
+
+                    <div class="character">
+                        <div class="stick">👴</div>
+                        <div>
+                            <b>Ветеран</b><br>
+                            Особый статус
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    🎖️ Ранения могут влиять на статус военного.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ТРАНСПОРТ -->
+        <section class="sheet" id="transport">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>🚗 ТРАНСПОРТ</h1>
+                <div class="subtitle">Машины города</div>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <div class="vehicle">🏎️</div>
+                        <b>Спорткар</b>
+                    </div>
+
+                    <div class="card">
+                        <div class="vehicle">🚙</div>
+                        <b>Джип</b>
+                    </div>
+
+                    <div class="card">
+                        <div class="vehicle">🚚</div>
+                        <b>Фура</b>
+                    </div>
+
+                    <div class="card">
+                        <div class="vehicle">🚐</div>
+                        <b>Фургон</b>
+                        <p>Может использоваться как дом.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="vehicle">💰🚐</div>
+                        <b>Инкассаторская машина</b>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ШАХТА -->
+        <section class="sheet" id="mine">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>⛏️ ШАХТА</h1>
+                <div class="subtitle">Добыча ресурсов</div>
+
+                <div class="mine">⛏️</div>
+
+                <div class="note">
+                    <b>Правило старой игры:</b><br>
+                    Добыча доступна <b>1 раз в день</b>.
+                </div>
+
+                <button class="primary" onclick="mineResource()">
+                    Ударить киркой
+                </button>
+
+                <div class="note" id="mineResult">
+                    Сегодня добыча ещё не производилась.
+                </div>
+
+                <div class="note">
+                    ♻️ Полученный металл можно сдавать.
+                    <br>
+                    🚗 Разбитая машина также может быть источником металла.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- КАЗНА -->
+        <section class="sheet" id="treasury">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>💰 КАЗНА</h1>
+                <div class="subtitle">Городские деньги</div>
+
+                <div class="note">
+                    <div>Казна города</div>
+                    <div class="bigMoney" id="money">100 000 ₽</div>
+                </div>
+
+                <div class="stat">
+                    <span>Мэр</span>
+                    <b>Томас</b>
+                </div>
+
+                <div class="stat">
+                    <span>Металл</span>
+                    <b id="metal">0 кг</b>
+                </div>
+
+                <button class="primary" onclick="sellMetal()">
+                    Сдать металл
+                </button>
+            </div>
+        </section>
+
+
+        <!-- БОЙ -->
+        <section class="sheet" id="battle">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>⚔️ БОЙ</h1>
+                <div class="subtitle">
+                    Простая старая механика: две стороны
+                </div>
+
+                <div class="note">
+                    Участников: <b>3–10</b>. Попадания случайные.
+                    Попадание в голову или сердце — мгновенная смерть.
+                </div>
+
+                <div class="battle">
+
+                    <div class="side">
+                        <h2>🪖 Сторона А</h2>
+                        <div class="fighters" id="sideA"></div>
+                    </div>
+
+                    <div class="side">
+                        <h2>🧍 Сторона Б</h2>
+                        <div class="fighters" id="sideB"></div>
+                    </div>
+
+                </div>
+
+                <br>
+
+                <button class="primary" onclick="startBattle()">
+                    ⚔️ Начать бой
+                </button>
+
+                <div class="log" id="battleLog">
+                    Бой ещё не начался.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- СОХРАНЕНИЯ -->
+        <section class="sheet" id="saves">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>💾 СОХРАНЕНИЯ</h1>
+                <div class="subtitle">Как старые отдельные листы</div>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <b>Сохранение №1</b>
+                        <p id="save1status">Пусто</p>
+                        <button class="primary" onclick="saveGame(1)">
+                            Сохранить
+                        </button>
+                        <button class="light" onclick="loadGame(1)">
+                            Загрузить
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <b>Сохранение №2</b>
+                        <p id="save2status">Пусто</p>
+                        <button class="primary" onclick="saveGame(2)">
+                            Сохранить
+                        </button>
+                        <button class="light" onclick="loadGame(2)">
+                            Загрузить
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <b>Сохранение №3</b>
+                        <p id="save3status">Пусто</p>
+                        <button class="primary" onclick="saveGame(3)">
+                            Сохранить
+                        </button>
+                        <button class="light" onclick="loadGame(3)">
+                            Загрузить
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    💾 Сохранения работают прямо в браузере.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ДОМ -->
+        <section class="sheet" id="home">
+            <div class="content">
+                <button class="back" onclick="openSheet('desktopSheet')">← Назад</button>
+                <h1>🏠 ДОМ МЭРА</h1>
+                <div class="subtitle">Личная резиденция Томаса</div>
+
+                <div class="homeIcon">🏠</div>
+
+                <div class="note">
+                    <b>Владелец:</b> Томас
+                </div>
+
+                <div class="note">
+                    Здесь можно будет постепенно добавить мебель,
+                    гараж, личные машины и другие элементы.
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+
+<script>
+
+let game = {
+    money:100000,
+    metal:0,
+    mined:false
+};
+
+
+// ЧАСЫ
+function updateClock(){
+    const d = new Date();
+    document.getElementById("clock").textContent =
+        d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+
+// ПЕРЕКЛЮЧЕНИЕ ЛИСТОВ
+function openSheet(id){
+
+    document.querySelectorAll(".sheet").forEach(sheet=>{
+        sheet.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+
+    updateUI();
+}
+
+
+// ШАХТА
+function mineResource(){
+
+    if(game.mined){
+        document.getElementById("mineResult").innerHTML =
+            "⛏️ Сегодня ты уже использовал свою попытку.<br>Приходи завтра.";
+        return;
+    }
+
+    game.mined = true;
+
+    const resources = [
+        {name:"камень",kg:5},
+        {name:"металл",kg:10},
+        {name:"железо",kg:15},
+        {name:"много металла",kg:25}
+    ];
+
+    const result =
+        resources[Math.floor(Math.random()*resources.length)];
+
+    game.metal += result.kg;
+
+    document.getElementById("mineResult").innerHTML =
+        "⛏️ Добыча завершена!<br>" +
+        "Получено: <b>"+result.name+
+        "</b> — "+result.kg+" кг.";
+
+    updateUI();
+}
+
+
+// СДАЧА МЕТАЛЛА
+function sellMetal(){
+
+    if(game.metal <= 0){
+        alert("Металла нет.");
+        return;
+    }
+
+    const income = game.metal * 100;
+
+    game.money += income;
+    game.metal = 0;
+
+    alert("Металл сдан. Получено "+income+" ₽.");
+
+    updateUI();
+}
+
+
+// БОЙ
+function createFighters(){
+
+    let countA = randomInt(3,5);
+    let countB = randomInt(3,5);
+
+    // Максимум 10 участников всего
+    while(countA + countB > 10){
+        if(countA > countB) countA--;
+        else countB--;
+    }
+
+    let a = [];
+    let b = [];
+
+    for(let i=0;i<countA;i++){
+        a.push({
+            id:i+1,
+            alive:true,
+            wounds:0
+        });
+    }
+
+    for(let i=0;i<countB;i++){
+        b.push({
+            id:i+1,
+            alive:true,
+            wounds:0
+        });
+    }
+
+    return {a,b};
+}
+
+let currentBattle = null;
+
+
+function renderBattle(){
+
+    const a = document.getElementById("sideA");
+    const b = document.getElementById("sideB");
+
+    a.innerHTML = "";
+    b.innerHTML = "";
+
+    currentBattle.a.forEach(f=>{
+        a.innerHTML += `
+            <div class="fighter ${f.alive?'':'dead'}">
+                🪖<br>
+                Военный ${f.id}<br>
+                ${f.alive ? "В строю" : "☠️ погиб"}
+                <br>
+                🩹 Ранений: ${f.wounds}
+            </div>
+        `;
+    });
+
+    currentBattle.b.forEach(f=>{
+        b.innerHTML += `
+            <div class="fighter ${f.alive?'':'dead'}">
+                🧍<br>
+                Боец ${f.id}<br>
+                ${f.alive ? "В строю" : "☠️ погиб"}
+                <br>
+                🩹 Ранений: ${f.wounds}
+            </div>
+        `;
+    });
+}
+
+
+function startBattle(){
+
+    currentBattle = createFighters();
+
+    renderBattle();
+
+    const log =
+        document.getElementById("battleLog");
+
+    log.textContent =
+        "⚔️ Бой начался!\n" +
+        "Сторона А: "+currentBattle.a.length+
+        "\nСторона Б: "+currentBattle.b.length;
+
+    let rounds = 0;
+
+    const timer = setInterval(()=>{
+
+        rounds++;
+
+        let aliveA =
+            currentBattle.a.filter(f=>f.alive);
+
+        let aliveB =
+            currentBattle.b.filter(f=>f.alive);
+
+        if(!aliveA.length || !aliveB.length || rounds>30){
+
+            clearInterval(timer);
+
+            log.textContent +=
+                "\n\n⚔️ Бой окончен.";
+
+            return;
+        }
+
+        const attacker =
+            Math.random()<.5 ? aliveA[randomInt(0,aliveA.length-1)]
+                             : aliveB[randomInt(0,aliveB.length-1)];
+
+        const enemySide =
+            aliveA.includes(attacker)
+            ? aliveB
+            : aliveA;
+
+        const target =
+            enemySide[randomInt(0,enemySide.length-1)];
+
+        const zones = [
+            "рука",
+            "нога",
+            "тело",
+            "плечо",
+            "голова",
+            "сердце"
+        ];
+
+        const zone =
+            zones[Math.floor(Math.random()*zones.length)];
+
+        if(zone==="голова" || zone==="сердце"){
+
+            target.alive = false;
+
+            log.textContent +=
+                "\n☠️ Боец "+target.id+
+                " получил смертельное попадание: "+
+                zone+".";
+
+        }else{
+
+            target.wounds++;
+
+            log.textContent +=
+                "\n🎯 Боец "+target.id+
+                " получил ранение: "+zone+".";
+
+        }
+
+        renderBattle();
+
+    },650);
+}
+
+
+function randomInt(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+
+// СОХРАНЕНИЯ
+function saveGame(slot){
+
+    localStorage.setItem(
+        "thomasGameSave"+slot,
+        JSON.stringify(game)
+    );
+
+    document.getElementById(
+        "save"+slot+"status"
+    ).textContent =
+        "Сохранено: "+
+        new Date().toLocaleString("ru-RU");
+}
+
+
+function loadGame(slot){
+
+    const data =
+        localStorage.getItem("thomasGameSave"+slot);
+
+    if(!data){
+        alert("Это сохранение пустое.");
+        return;
+    }
+
+    game = JSON.parse(data);
+
+    updateUI();
+
+    alert("Сохранение №"+slot+" загружено.");
+}
+
+
+// ОБНОВЛЕНИЕ
+function updateUI(){
+
+    document.getElementById("money").textContent =
+        game.money.toLocaleString("ru-RU")+" ₽";
+
+    document.getElementById("metal").textContent =
+        game.metal+" кг";
+
+    if(game.mined){
+        document.getElementById("mineResult").innerHTML =
+            "⛏️ Сегодня попытка уже использована.<br>" +
+            "Следующая добыча будет доступна завтра.";
+    }
+}
+
+updateUI();
+
+</script>
+
+</body>
+</html>
